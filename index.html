@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNAERP | Aluno Online</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    .fade {
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+    }
+    .fade.active {
+      opacity: 1;
+    }
+
+    header {
+      background-color: #002b69;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(6px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    } 
+    
+    .logo-2 img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .logo h1 {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      font-size: 16px;
+      color: #ffd700;
+    }
+
+    #menu-toggle {
+      display: none;
+    }
+
+    .menu-icon {
+      width: 28px;
+      height: 3px;
+      background-color: white;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .menu-icon::before,
+    .menu-icon::after {
+      content: "";
+      position: absolute;
+      width: 28px;
+      height: 3px;
+      background-color: white;
+      left: 0;
+      transition: 0.3s;
+    }
+
+    .menu-icon::before { top: -8px; }
+    .menu-icon::after { top: 8px; }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #01306d;
+      color: white;
+      transition: left 0.3s ease;
+      padding-top: 70px;
+      z-index: 99;
+      backdrop-filter: blur(8px);
+    }
+
+    nav ul {
+      list-style: none;
+    }
+
+    nav li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    nav a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 15px 20px;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    nav a:hover {
+      background-color: #004aad;
+    }
+
+    #menu-toggle:checked ~ nav {
+      left: 0;
+    }
+
+    #menu-toggle:checked + header .menu-icon {
+      background-color: transparent;
+    }
+
+    #menu-toggle:checked + header .menu-icon::before {
+      transform: rotate(45deg);
+      top: 0;
+    }
+
+    #menu-toggle:checked + header .menu-icon::after {
+      transform: rotate(-45deg);
+      top: 0;
+    }
+
+    main {
+      display: none;
+      opacity: 0;
+    }
+
+    main.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .welcome {
+      background-color: #0e8c76;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-weight: 500;
+    }
+
+    .aluno-card {
+      background-color: white;
+      width: 90%;
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .aluno-topo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+
+ .aluno-topo img {
+  width: 120px;
+  height: 120px;
+  border-radius: 70px;
+  object-fit: contain;
+  object-position: center;
+  background-color: #fff; /* opcional — cor de fundo se a imagem tiver bordas transparentes */
+}
+    .aluno-topo h2 {
+      color: #0078d4;
+      font-size: 22px;
+    }
+
+    .aluno-topo p {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .dados-aluno {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .dados-aluno strong {
+      color: #002b69;
+    }
+
+    .botoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .botoes button {
+      flex: 1;
+      min-width: 200px;
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .botoes button:hover {
+      background-color: #005fa3;
+    }
+
+    .avisos {
+      background-color: white;
+      width: 90%;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .avisos h3 {
+      color: #0078d4;
+      margin-bottom: 15px;
+      font-size: 18px;
+      border-bottom: 2px solid #0078d4;
+      padding-bottom: 5px;
+    }
+
+    .aviso-item {
+      border-left: 4px solid #0078d4;
+      background-color: #f0f8ff;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .aviso-item small {
+      display: block;
+      color: #555;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .aviso-item strong {
+      display: block;
+      color: #004aad;
+    }
+
+    .aviso-item a {
+      color: #0078d4;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      padding: 15px 0;
+      margin-top: 30px;
+    }
+
+    /* LOGIN */
+    #login-screen {
+      display: none;
+      text-align: center;
+      margin-top: 100px;
+      transition: opacity 0.4s ease-in-out;
+    }
+
+    #login-screen.active {
+      display: block;
+      opacity: 1;
+    }
+
+    #login-screen img {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+
+    #login-screen input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 250px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    #login-screen button {
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    #login-screen button:hover {
+      background-color: #005fa3;
+    }
+
+    @media (max-width: 600px) {
+      .aluno-topo {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .botoes button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <input type="checkbox" id="menu-toggle" />
+
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="Logo UNAERP" />
+      <h1>unaerp</h1>
+      <span>| Aluno Online</span>
+    </div>
+    <label for="menu-toggle" class="menu-icon"></label>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#" onclick="mostrarAba('perfil')">Perfil</a></li>
+      <li><a href="#" onclick="mostrarAba('notas')">Notas</a></li>
+      <li><a href="#" onclick="mostrarAba('faltas')">Faltas</a></li>
+      <li><a href="#" onclick="mostrarAba('disciplinas')">Disciplinas</a></li>
+      <li><a href="#" onclick="mostrarAba('calendario')">Calendário</a></li>
+      <li><a href="#" onclick="mostrarAba('documentos')">Documentos</a></li>
+      <li><a href="#" onclick="mostrarLogin()">Sair</a></li>
+    </ul>
+  </nav>
+
+  <!-- PERFIL -->
+  <main id="perfil" class="fade active">
+    <div class="welcome">Olá Júlia, seja bem-vindo(a)!</div>
+
+    <div class="aluno-card">
+      <div class="aluno-topo">
+        <img src="minha-foto.png" alt="Foto do aluno" />
+        <div>
+          <h2>Júlia Cristina da Silva Fernandez</h2>
+          <p>Código Aluno: <strong>843932</strong></p>
+        </div>
+      </div>
+
+      <div class="dados-aluno">
+        <p><strong>Curso:</strong> Ciências da Computação</p>
+        <p><strong>Usuário Google Education:</strong> julia.fernandez@sou.unaerp.edu.br</p>
+        <p><strong>Ano/Sem.:</strong> 2026/2 &nbsp;&nbsp; <strong>Etapa:</strong> 5</p>
+        <p><strong>Currículo:</strong> 1310 &nbsp;&nbsp; <strong>Campus:</strong> Ribeirão Preto</p>
+      </div>
+    </div>
+
+    <div class="botoes">
+      <button>Alterar curso e ano/semestre</button>
+      <button>Novos arquivos: 2</button>
+      <button>Novos avisos: 5</button>
+    </div>
+
+  <div class="avisos">
+      <h3>Quadro de Avisos</h3>
+      <div class="aviso-item">
+        <small>02/10/2026</small>
+        <strong>Informe-se</strong>
+        A UNAERP divulga o novo cronograma de provas de 2026/2. <br />
+        <a href="#">Leia mais</a>
+      </div>
+
+      <div class="aviso-item">
+        <small>28/10/2026</small>
+        <strong>Semana da Farmácia</strong>
+        Participe dos minicursos de injetáveis e das palestras com o CRF na próxima semana! <br />
+        <a href="#">Ver detalhes</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- OUTRAS ABAS (notas, faltas etc.) -->
+<main id="notas" class="fade">
+    <div class="welcome">Notas do Semestre</div>
+    <div class="aluno-card">
+      <p><strong>Farmacologia Geral:</strong> 8,5</p>
+      <p><strong>Química Farmacêutica:</strong> 9,0</p>
+      <p><strong>Tecnologia de Medicamentos:</strong> 7,8</p>
+      <p><strong>Análises Clínicas e Toxicológicas:</strong> 8,2</p>
+      <p><strong>Farmacognosia e Fitoterapia:</strong> 9,5</p>
+    </div>
+</main>
+
+
+ <main id="faltas" class="fade">
+    <div class="welcome">Controle de Faltas</div>
+    <div class="aluno-card">
+      <p><strong>Farmacologia Geral:</strong> 2 faltas</p>
+      <p><strong>Química Farmacêutica:</strong> 1 falta</p>
+      <p><strong>Tecnologia de Medicamentos:</strong> 0 faltas</p>
+      <p><strong>Análises Clínicas e Toxicológicas:</strong> 3 faltas</p>
+      <p><strong>Farmacognosia e Fitoterapia:</strong> 0 faltas</p>
+    </div>
+</main>
+
+
+
+  <main id="disciplinas" class="fade">
+    <div class="welcome">Suas Disciplinas</div>
+    <div class="aluno-card">
+      <ul>
+        <li>Farmacologia Geral</li>
+        <li>Química Farmacêutica</li>
+        <li>Tecnologia de Medicamentos</li>
+        <li>Análises Clínicas e Toxicológicas</li>
+        <li>Farmacognosia e Fitoterapia</li>
+      </ul>
+    </div>
+  </main>
+
+   <main id="calendario" class="fade">
+    <div class="welcome">Calendário Acadêmico</div>
+    <div class="aluno-card">
+      <p>• 15/11 – Feriado Proclamação da República</p>
+      <p>• 20/11 – Entrega dos relatórios de estágio supervisionado</p>
+      <p>• 05/12 – Provas finais e avaliações práticas de laboratório</p>
+    </div>
+  </main>
+
+  <main id="documentos" class="fade">
+    <div class="welcome">Documentos Disponíveis</div>
+    <div class="aluno-card">
+      <ul>
+        <li><a href="#">Histórico Escolar (PDF)</a></li>
+        <li><a href="#">Comprovante de Matrícula</a></li>
+        <li><a href="#">Manual de Biossegurança dos Laboratórios</a></li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- LOGIN -->
+  <div id="login-screen" class="fade">
+    <img src="logo-2.png" alt="Logo UNAERP" />
+    <h2>Login Portal</h2>
+    <input type="text" placeholder="Usuário" />
+    <input type="password" placeholder="Senha" />
+    <button onclick="voltarPerfil()">Entrar</button>
+  </div>
+
+  <footer>© 2025 Universidade de Ribeirão Preto (UNAERP) - Aluno Online</footer>
+
+  <script>
+    const menuToggle = document.getElementById("menu-toggle");
+
+    function fecharMenu() {
+      menuToggle.checked = false;
+    }
+
+    function mostrarAba(aba) {
+      document.querySelectorAll("main").forEach(m => m.classList.remove("active"));
+      document.querySelectorAll(".fade").forEach(f => f.classList.remove("active"));
+      document.getElementById(aba).classList.add("active");
+      fecharMenu();
+    }
+
+    function mostrarLogin() {
+      document.querySelectorAll("main").forEach(m => m.classList.remove("active"));
+      document.querySelectorAll(".fade").forEach(f => f.classList.remove("active"));
+      document.getElementById("login-screen").classList.add("active");
+      fecharMenu();
+    }
+
+    function voltarPerfil() {
+      document.querySelectorAll(".fade").forEach(f => f.classList.remove("active"));
+      document.getElementById("perfil").classList.add("active");
+    }
+  </script>
+</body>
+</html>
